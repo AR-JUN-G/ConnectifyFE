@@ -2,18 +2,42 @@ import { FiSearch, FiSettings, FiMoreVertical } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../Store/store";
 import "./ChatSideBar.css";
+import { useEffect, useState } from "react";
+import { directChatResponseType } from "../../../Types/ChatAPI.types";
+import { getChatList } from "../../../API/ChatAPI";
+import formatChatTime from "../../../utils/FormatDate";
+import { Socket } from "socket.io-client";
 
-const mockChats = [
-    { id: 1, name: "Arjun G.", lastMsg: "Hey, did you check the new API?", time: "10:30 AM", unread: 2, online: true },
-    { id: 2, name: "Deepak S.", lastMsg: "Let's catch up tomorrow.", time: "Yesterday", unread: 0, online: false },
-    { id: 3, name: "Priya M.", lastMsg: "The design looks great! 🔥", time: "Monday", unread: 0, online: true },
-    { id: 4, name: "Rahul K.", lastMsg: "I'll send the files by evening.", time: "Sunday", unread: 5, online: false },
-];
-
-const ChatSideBar = () => {
+const ChatSideBar = ({ socket }: { socket: Socket }) => {
     const user = useSelector((state: RootState) => state.User);
+    const [chatList, setChatList] = useState<directChatResponseType[]>([]);
+    const getUserChatList = async () => {
+        try {
+            const response = await getChatList();
+            if (response.status === 200) {
+                setChatList(response.data?.chats || []);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    useEffect(() => {
+        getUserChatList();
+    }, []);
+
+    const handleChatClick = (chat: directChatResponseType) => {
+        console.log("Chat clicked", chat);
+        const fromUserID = user.userID;
+        const toUserID = chat?.userID;
+        const fromUserName = user.firstName;
+        const toUserName = chat.firstName;
+        if (fromUserID && toUserID) {
+            socket.emit('joinChat', { fromUserID, toUserID, fromUserName, toUserName });
+        }
+    }
 
     return (
+
         <aside className="chat-sidebar">
             <header className="sidebar-header">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -24,49 +48,55 @@ const ChatSideBar = () => {
                 </div>
                 <div className="search-box">
                     <FiSearch className="search-icon" size={18} />
-                    <input 
-                        type="text" 
-                        placeholder="Search messages..." 
+                    <input
+                        type="text"
+                        placeholder="Search messages..."
                         className="search-input"
                     />
                 </div>
             </header>
 
             <div className="conversation-list">
-                {mockChats.map((chat) => (
-                    <div 
-                        key={chat.id} 
-                        className={`conversation-item ${chat.id === 1 ? 'active' : ''}`}
+
+                {chatList.map((chat) => (
+                    <div
+                        key={chat.userID}
+                        className={`conversation-item`}
+                        onClick={() => handleChatClick(chat)}
                     >
                         <div className="avatar-container">
-                            <img 
-                                src={`https://ui-avatars.com/api/?name=${chat.name}&background=6366f1&color=fff`} 
-                                alt={chat.name} 
+                            <img
+                                src={`https://ui-avatars.com/api/?name=${chat.firstName + " " + chat.lastName}&background=6366f1&color=fff`}
+                                alt={chat.firstName + " " + chat.lastName}
                                 className="chat-avatar"
                             />
-                            {chat.online && <div className="status-dot"></div>}
+                            {/* Need to Implement Online Feature */}
+                            {/* {chat.online && <div className="status-dot"></div>} */}
                         </div>
                         <div className="chat-info">
                             <div className="chat-name-row">
-                                <span className="chat-name">{chat.name}</span>
-                                <span className="chat-time">{chat.time}</span>
+                                <span className="chat-name">{chat.firstName + " " + chat.lastName}</span>
+                                <span className="chat-time">{formatChatTime(chat.time)}</span>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <p className="last-msg">{chat.lastMsg}</p>
-                                {chat.unread > 0 && (
+                                <p className="last-msg">{chat.latestMessage}</p>
+
+                                {/* Need to Implement Unread Count Feature */}
+                                {/* {chat.unread > 0 && (
                                     <span className="unread-badge">{chat.unread}</span>
-                                )}
+                                )} */}
                             </div>
                         </div>
                     </div>
                 ))}
+
             </div>
 
             <footer className="sidebar-footer">
                 <div className="user-profile-mini">
-                    <img 
-                        src={user.profilePic || `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=333&color=fff`} 
-                        alt="Profile" 
+                    <img
+                        src={user.profilePic || `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=333&color=fff`}
+                        alt="Profile"
                         className="chat-avatar"
                         style={{ width: 40, height: 40 }}
                     />
@@ -80,6 +110,7 @@ const ChatSideBar = () => {
                 </button>
             </footer>
         </aside>
+
     );
 }
 

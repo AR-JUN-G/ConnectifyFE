@@ -1,23 +1,25 @@
 import { useNavigate } from "react-router";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../Store/store";
 import { LogoutAPI } from "../../API/AuthAPI";
+import { removeUserDetails } from "../../Store/userSlice";
 
 const Home = () => {
-
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const userID = useSelector((state: RootState) => state.User.userID);
+
     const handleLogout = async () => {
         try {
-            const data = await LogoutAPI();
-            if (data.message) {
-                navigate("/");
+            const result = await LogoutAPI();
+            if (result.status === 200 || result.data?.message) {
+                dispatch(removeUserDetails());
+                navigate("/login");
             }
         } catch (error) {
-            console.log(error);
+            console.error("Logout Error:", error);
         }
-
-    }
+    };
     return (<>
         <h1>Home</h1>
         <button onClick={() => navigate(`/chat/${userID}`)}>Chat</button>

@@ -6,7 +6,8 @@ export type LoginType = {
 export type LoginResponseType = {
     message: string,
     userID: string,
-    name: string,
+    firstName: string,
+    lastName: string,
     email: string,
     photourl: string,
 };
@@ -37,7 +38,12 @@ export type SignupResponseType = {
     },
 };
 
-export type APIErrorResponse = {
-    message: string;
-    errors?: Record<string, string>;
-};
+
+export type RefreshTokenResponseType = {
+    message: string
+}
+
+export type LogoutResponseType = {
+    message: string
+
+}

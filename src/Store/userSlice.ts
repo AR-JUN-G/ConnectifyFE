@@ -22,15 +22,21 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         updateUserDetails: (state, action) => {
-            console.log(action.payload, "Payload")
             state.userID = action.payload.userID;
             state.firstName = action.payload.firstName;
             state.lastName = action.payload.lastName;
             state.email = action.payload.email;
             state.profilePic = action.payload.photourl;
+        },
+        removeUserDetails: (state) => {
+            state.userID = null;
+            state.firstName = null;
+            state.lastName = null;
+            state.email = null;
+            state.profilePic = null;
         }
     }
 })
 
-export const { updateUserDetails } = userSlice.actions;
+export const { updateUserDetails, removeUserDetails } = userSlice.actions;
 export default userSlice.reducer;

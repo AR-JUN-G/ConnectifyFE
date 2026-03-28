@@ -41,7 +41,7 @@ const Signup = () => {
       });
 
       console.log("Signup Successful:", response);
-      alert(response.message || "Registration Successful!");
+      alert(response.data?.message || "Registration Successful!");
       navigate("/login");
     } catch (err: any) {
       setError(err?.message || "Something went wrong! Please try again.");

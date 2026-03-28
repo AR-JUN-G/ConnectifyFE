@@ -19,7 +19,7 @@ const Chat = () => {
 
     return (
         <div className="chat-container">
-            <ChatSideBar />
+            <ChatSideBar socket={socket}/>
             <ChatWindow />
         </div>
     )

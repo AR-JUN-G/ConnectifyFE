@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, Method } from "axios";
 
-const APIClient = async<T>(url: string, method: Method, body?: any):Promise<T> => {
+const APIClient = async<T>(url: string, method: Method, body?: any): Promise<{ data: T; status: number }> => {
     try {
         const config = {
             method,
@@ -10,11 +10,14 @@ const APIClient = async<T>(url: string, method: Method, body?: any):Promise<T> =
         };
 
         const response: AxiosResponse<T> = await axios(config);
-        return response.data;
+        return {
+            data: response.data,
+            status: response.status
+        };
     }
-    catch (e:any) {
+    catch (e: any) {
         console.log(e, "Error in API Client");
-        throw e.response?.data || e.message;
+        throw e;
     }
 }
 

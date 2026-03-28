@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import "./Login.css";
 import { useNavigate } from "react-router";
@@ -6,6 +6,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import { updateUserDetails } from "../../Store/userSlice";
 import { LoginAPI } from "../../API/AuthAPI";
+import useAuth from "../../customHooks/useAuth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,21 +16,50 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const { loading, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate("/home");
+    }
+  }, [loading, isAuthenticated, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     try {
       const response = await LoginAPI({ emailId: email, password });
-
-      dispatch(updateUserDetails(response));
-      console.log("Login Successful:", response);
-      navigate("/home");
-
-    } catch (err: any) {
+      if (response.data) {
+        dispatch(updateUserDetails({
+          userID: response.data.userID,
+          firstName: response.data.firstName,
+          lastName: response.data.lastName,
+          email: response.data.email,
+          photourl: response.data.photourl
+        }));
+        navigate("/home");
+      }
+    }
+    catch (err: any) {
       setError(err?.message || "Invalid credentials! Please try again.");
     }
   };
+
+  if (loading) {
+    return (
+      <div className="loading-container" style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#111',
+        color: '#fff'
+      }}>
+        <div className="loader">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="login-container">

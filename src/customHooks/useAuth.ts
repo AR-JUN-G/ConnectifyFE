@@ -10,32 +10,46 @@ const useAuth = () => {
     const user = useSelector((state: RootState) => state.User.userID);
 
     useEffect(() => {
-        const checkAuth = async () => {
+        const handleSessionFetch = async () => {
             try {
-                if (user) {
-                    setLoading(false);
-                    return;
+                const result = await getSessionAPI();
+                if (result.data?.user) {
+                    const { user: userData } = result.data;
+                    dispatch(updateUserDetails({
+                        userID: userData._id,
+                        firstName: userData.firstName,
+                        lastName: userData.lastName,
+                        email: userData.emailId,
+                        photourl: userData.photourl
+                    }));
+                    return true;
                 }
-
-                const data = await getSessionAPI();
-                if (data.user) {
-                    dispatch(updateUserDetails(data));
-                }
+                return false;
             } catch (error) {
-                console.error('Session fetch failed, attempting refresh...', error);
-                try {
-                    await refreshToken();
-                    const response = await getSessionAPI();
-                    console.log(response, "UseAuthResponse");
-                    if (response.user) {
-                        dispatch(updateUserDetails(response));
-                    }
-                } catch (refreshError) {
-                    console.error('Refresh token also failed', refreshError);
-                }
-            } finally {
-                setLoading(false);
+                console.error("Session check error:", error);
+                return false;
             }
+        };
+
+        const checkAuth = async () => {
+            if (user) {
+                setLoading(false);
+                return;
+            }
+
+            const success = await handleSessionFetch();
+
+            if (!success) {
+                try {
+                    console.log("Session invalid, attempting token refresh...");
+                    await refreshToken();
+                    // Refetch session after refresh
+                    await handleSessionFetch();
+                } catch (refreshError) {
+                    console.error('Refresh token failed:', refreshError);
+                }
+            }
+            setLoading(false);
         };
 
         checkAuth();
