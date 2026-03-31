@@ -2,12 +2,12 @@ import React from "react";
 import { FiPhone, FiVideo, FiInfo, FiMoreVertical } from "react-icons/fi";
 
 interface ChatHeaderProps {
-    name: string;
-    online: boolean;
+    name?: string;
+    online?: boolean;
     avatar?: string;
 }
 
-const ChatHeader: React.FC<ChatHeaderProps> = ({ name, online, avatar }) => {
+const ChatHeader: React.FC<ChatHeaderProps> = ({ name = "Chat User", online = false, avatar }) => {
     return (
         <header className="chat-header-container">
             <div className="header-user-info">

@@ -22,7 +22,7 @@ const Home = () => {
     };
     return (<>
         <h1>Home</h1>
-        <button onClick={() => navigate(`/chat/${userID}`)}>Chat</button>
+        <button onClick={() => navigate(`/direct/inbox`)}>Chat</button>
         <button onClick={handleLogout}>Logout</button>
     </>)
 }

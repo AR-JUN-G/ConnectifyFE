@@ -1,4 +1,4 @@
-import { availableMembersForChatResponseType, directChatListResponseType } from "../Types/ChatAPI.types";
+import { availableMembersForChatResponseType, directChatListResponseType, directMessageListResponseType } from "../Types/ChatAPI.types";
 import { AxiosError } from "axios";
 import { APIResponseType } from "../Types/CommonAPIResponse.types";
 import { BASE_URL } from "../utils/constants";
@@ -45,5 +45,27 @@ const getAvailableMemebersForChat = async (): Promise<APIResponseType<availableM
         }
     }
 }
-export { getChatList, getAvailableMemebersForChat }
+
+const getDirectMessages = async (toUserID: string, page: number, limit: number): Promise<APIResponseType<directMessageListResponseType>> => {
+    try {
+        const url = `${BASE_URL}/direct/${toUserID}`;
+        const { data, status } = await APIClient<directMessageListResponseType>(url, "GET", {}, { page, limit });
+
+        return {
+            data: data,
+            error: null,
+            status: status
+        }
+    } catch (error) {
+        const AxiosError = error as AxiosError<{ message: string }>;
+        console.error("Error in getChatList", AxiosError);
+        return {
+            data: null,
+            error: AxiosError.response?.data?.message || "Something went wrong",
+            status: AxiosError.response?.status || 500
+        }
+    }
+}
+
+export { getChatList, getAvailableMemebersForChat, getDirectMessages }
 

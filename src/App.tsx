@@ -18,7 +18,12 @@ export function App() {
             <Home />
           </ProtectedRoute>
         } />
-        <Route path="/chat/:id" element={
+        <Route path="/direct/inbox" element={
+          <ProtectedRoute>
+            <Chat />
+          </ProtectedRoute>
+        } />
+        <Route path="/direct/inbox/:toUserID" element={
           <ProtectedRoute>
             <Chat />
           </ProtectedRoute>

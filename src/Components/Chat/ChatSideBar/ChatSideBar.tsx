@@ -7,10 +7,15 @@ import { directChatResponseType } from "../../../Types/ChatAPI.types";
 import { getChatList } from "../../../API/ChatAPI";
 import formatChatTime from "../../../utils/FormatDate";
 import { Socket } from "socket.io-client";
+import { useParams, useNavigate } from "react-router";
 
 const ChatSideBar = ({ socket }: { socket: Socket }) => {
+    const navigate = useNavigate();
+    const { toUserID: activeChatID } = useParams();
+
     const user = useSelector((state: RootState) => state.User);
     const [chatList, setChatList] = useState<directChatResponseType[]>([]);
+
     const getUserChatList = async () => {
         try {
             const response = await getChatList();
@@ -21,12 +26,12 @@ const ChatSideBar = ({ socket }: { socket: Socket }) => {
             console.log(error);
         }
     }
+
     useEffect(() => {
         getUserChatList();
     }, []);
 
     const handleChatClick = (chat: directChatResponseType) => {
-        console.log("Chat clicked", chat);
         const fromUserID = user.userID;
         const toUserID = chat?.userID;
         const fromUserName = user.firstName;
@@ -34,7 +39,17 @@ const ChatSideBar = ({ socket }: { socket: Socket }) => {
         if (fromUserID && toUserID) {
             socket.emit('joinChat', { fromUserID, toUserID, fromUserName, toUserName });
         }
+        navigate(`/direct/inbox/${chat.userID}`);
     }
+
+    useEffect(() => {
+        if (activeChatID && chatList.length > 0) {
+            const currentChat = chatList.find(c => c.userID === activeChatID);
+            if (currentChat) {
+                handleChatClick(currentChat);
+            }
+        }
+    }, [activeChatID, chatList]);
 
     return (
 
@@ -61,7 +76,7 @@ const ChatSideBar = ({ socket }: { socket: Socket }) => {
                 {chatList.map((chat) => (
                     <div
                         key={chat.userID}
-                        className={`conversation-item`}
+                        className={`conversation-item ${chat.userID === activeChatID ? 'active' : ''}`}
                         onClick={() => handleChatClick(chat)}
                     >
                         <div className="avatar-container">

@@ -24,4 +24,19 @@ type availableMembersForChatResponseType = {
     members: availableMemberResponseType[];
 }
 
-export type { directChatResponseType, directChatListResponseType, availableMembersForChatResponseType };
+type directMessageReponseType = {
+    _id: string,
+    senderId: string,
+    message: string,
+    createdAt: Date
+}
+
+type directMessageListResponseType = {
+    messages: directMessageReponseType[],
+    pagination: {
+        currentPage: number,
+        hasMore: boolean
+    }
+}
+
+export type { directChatResponseType, directChatListResponseType, availableMembersForChatResponseType, directMessageListResponseType, directMessageReponseType };
