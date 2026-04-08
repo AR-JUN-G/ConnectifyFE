@@ -6,6 +6,7 @@ import Chat from "./Components/Chat/Chat";
 import Home from "./Components/Home/Home";
 import ProtectedRoute from "./Components/Auth/ProtectedRoute";
 import AppLayout from "./Components/AppLayout/AppLayout";
+import Activity from "./Components/Activity/Activity";
 
 export function App() {
   return (
@@ -24,12 +25,7 @@ export function App() {
           <Route path="/direct/inbox" element={<Chat />} />
           <Route path="/direct/inbox/:toUserID" element={<Chat />} />
 
-          <Route path="/requests" element={
-            <div style={{ padding: '40px', color: '#fff' }}>
-              <h1>Friend Requests & Suggestions</h1>
-              <p>Coming soon: Manage your developer connections here.</p>
-            </div>
-          } />
+          <Route path="/requests" element={<Activity />} />
 
           <Route path="/profile" element={
             <div style={{ padding: '40px', color: '#fff' }}>
