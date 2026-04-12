@@ -35,5 +35,19 @@ To run this frontend locally, you will also need to spin up the [Backend API](ht
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/AR-JUN-G/ConnectifyFE.git](https://github.com/AR-JUN-G/ConnectifyFE.git)
-   cd ConnectifyFE
+   git clone https://github.com/AR-JUN-G/ConnectifyFE.git
+   ```
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+3. Configure Environment Variables:
+   Create a .env file in the root directory and add your local API and Socket endpoints:
+   ```bash
+   REACT_APP_BASE_URL=http://localhost:7777/api
+   REACT_APP_SOCKET_URL=http://localhost:7777
+   ```
+4. Start the development server:
+   ```bash
+   npm start
+   ```
