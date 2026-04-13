@@ -189,7 +189,7 @@ const Profile = () => {
                         </div>
                         <input 
                             type="file" 
-                            accept="image/*" 
+                            accept="image/jpeg, image/jpg" 
                             ref={fileInputRef}
                             style={{ display: 'none' }}
                             onChange={handleImageUpload}
