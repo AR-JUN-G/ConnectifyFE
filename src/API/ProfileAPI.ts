@@ -62,7 +62,14 @@ const uploadFileToS3API = async (uploadUrl: string, file: File): Promise<boolean
             }
         });
 
-        return response.ok;
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("AWS S3 Rejection XML:", errorText);
+            return false;
+        }
+
+        console.log("Upload Success!");
+        return true;
     } catch (error) {
         console.error("Direct S3 upload failed", error);
         return false;
