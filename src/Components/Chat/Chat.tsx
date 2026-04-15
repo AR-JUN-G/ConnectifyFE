@@ -12,13 +12,12 @@ import { RootState } from "../../Store/store";
 import { useSocket } from "../../Context/SocketProvider";
 
 const Chat = () => {
-    const { socket } = useSocket();
+    const { socket, onlineUsers } = useSocket();
     const user = useSelector((state: RootState) => state.User);
     const { toUserID } = useParams();
     const [renderFriendListPopup, setRenderFriendListPopup] = useState<boolean>(false);
     const [chatList, setChatList] = useState<directChatResponseType[]>([]);
     const [friendList, setFriendList] = useState<availableMemberResponseType[]>([]);
-    const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
     const getUserChatList = async () => {
         try {
@@ -47,6 +46,7 @@ const Chat = () => {
         getFriendListToChat();
         setRenderFriendListPopup(true);
     }
+
     useEffect(() => {
         getUserChatList();
     }, []);
@@ -62,13 +62,8 @@ const Chat = () => {
             console.log("Connected with Backend Successfully", socket.id);
         });
 
-        socket.on("getOnlineUser", (users: string[]) => {
-            setOnlineUsers(users);
-        });
-
         return () => {
             socket.off("connect");
-            socket.off("getOnlineUser");
         }
     }, [socket])
 
