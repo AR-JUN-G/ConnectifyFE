@@ -26,11 +26,14 @@ const Activity = () => {
     }
 
     const handleReview = async (status: "accepted" | "rejected", requestId: string) => {
+        setReceivedRequests(prev => prev.filter(req => req._id !== requestId));
+
         try {
             const response = await reviewReceivedRequest(status, requestId);
-            if (response.status === 200) {
-                // Optimistically update UI
-                setReceivedRequests(prev => prev.filter(req => req._id !== requestId));
+            if (response.status === 201) {
+                console.log(`Request ${status} successfully.`);
+            } else {
+                console.error("Review action failed on server.");
             }
         } catch (error) {
             console.error("Error reviewing request:", error);

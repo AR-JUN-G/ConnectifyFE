@@ -21,24 +21,9 @@ const ChatSideBar = ({ socket, chatList, onlineUsers }: ChatSideBarProps) => {
     const user = useSelector((state: RootState) => state.User);
 
     const handleChatClick = (chat: directChatResponseType) => {
-        const fromUserID = user.userID;
-        const toUserID = chat?.userID;
-        const fromUserName = user.firstName;
-        const toUserName = chat.firstName;
-        if (fromUserID && toUserID) {
-            socket.emit('joinChat', { fromUserID, toUserID, fromUserName, toUserName });
-        }
+        // Room joining is now handled globally by Chat.tsx
         navigate(`/direct/inbox/${chat.userID}`);
     }
-
-    useEffect(() => {
-        if (activeChatID && chatList.length > 0) {
-            const currentChat = chatList.find(c => c.userID === activeChatID);
-            if (currentChat) {
-                handleChatClick(currentChat);
-            }
-        }
-    }, [activeChatID, chatList]);
 
     return (
 

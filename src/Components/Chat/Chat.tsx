@@ -55,14 +55,52 @@ const Chat = () => {
         chatList.find(chat => chat.userID === toUserID) ||
         friendList.find(friend => friend._id === toUserID);
 
+    // 1. Centralized room joining
+    useEffect(() => {
+        if (socket && toUserID && user.userID) {
+            socket.emit("joinChat", {
+                fromUserID: user.userID,
+                toUserID: toUserID,
+                fromUserName: user.firstName,
+                toUserName: selectedUser ? `${selectedUser.firstName} ${selectedUser.lastName}` : "User"
+            });
+        }
+    }, [socket, toUserID, user.userID, user.firstName, selectedUser]);
+
+    // 2. Sidebar real-time updates
     useEffect(() => {
         if (!socket) return;
 
+        const handleNewMessage = (newMessage: any) => {
+            setChatList(prev => {
+                const existingIndex = prev.findIndex(c => c.userID === newMessage.senderId);
+                
+                if (existingIndex !== -1) {
+                    const updated = [...prev];
+                    const chat = { ...updated[existingIndex] };
+                    
+                    chat.latestMessage = newMessage.message;
+                    chat.time = newMessage.createdAt;
+                    
+                    // Move to top of list
+                    updated.splice(existingIndex, 1);
+                    return [chat, ...updated];
+                } else {
+                    // New contact? Refresh the whole list to include them
+                    getUserChatList();
+                    return prev;
+                }
+            });
+        };
+
+        socket.on("messageReceived", handleNewMessage);
+        
         socket.on("connect", () => {
             console.log("Connected with Backend Successfully", socket.id);
         });
 
         return () => {
+            socket.off("messageReceived", handleNewMessage);
             socket.off("connect");
         }
     }, [socket])
