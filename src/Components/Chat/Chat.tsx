@@ -108,7 +108,8 @@ const Chat = () => {
     if (!socket) return <div className="loading-spinner-container"><div className="spinner"></div></div>;
 
     return (
-        <div className="chat-container">
+        // Apply responsive wrapper classes
+        <div className={`chat-container ${toUserID ? 'chat-active' : 'sidebar-active'}`}>
             <ChatSideBar socket={socket} chatList={chatList} onlineUsers={onlineUsers} />
             {toUserID ? (
                 <ChatWindow socket={socket} toUserID={toUserID} selectedUser={selectedUser} onlineUsers={onlineUsers} />
@@ -127,7 +128,7 @@ const Chat = () => {
                     </div>
                 </div>
             )}
-            {renderFriendListPopup ? <FriendListPopup friends={friendList} onClose={() => setRenderFriendListPopup(false)} /> : <></>}
+            {renderFriendListPopup && <FriendListPopup friends={friendList} onClose={() => setRenderFriendListPopup(false)} />}
         </div>
     )
 }

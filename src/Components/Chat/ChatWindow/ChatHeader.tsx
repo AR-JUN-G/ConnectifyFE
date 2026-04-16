@@ -1,5 +1,6 @@
 import React from "react";
-import { FiPhone, FiVideo, FiInfo, FiMoreVertical } from "react-icons/fi";
+import { FiPhone, FiVideo, FiInfo, FiMoreVertical, FiArrowLeft } from "react-icons/fi";
+import { Link } from "react-router";
 
 interface ChatHeaderProps {
     name?: string;
@@ -11,6 +12,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ name = "Chat User", online = fa
     return (
         <header className="chat-header-container">
             <div className="header-user-info">
+                <Link to="/direct/inbox" className="mobile-back-btn">
+                    <FiArrowLeft size={24} />
+                </Link>
                 <img
                     src={avatar || `https://ui-avatars.com/api/?name=${name}&background=6366f1&color=fff`}
                     alt={name}

@@ -2,7 +2,8 @@
     padding: 32px;
     max-width: 800px;
     margin: 0 auto;
-    min-height: 100vh;
+    min-height: 100%;
+    box-sizing: border-box;
 }
 
 .profile-header {
@@ -180,10 +181,33 @@
 
 .profile-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 16px;
     padding-top: 24px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logout-profile-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logout-profile-btn:hover {
+    background: #ef4444;
+    color: #fff;
+    box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+    transform: translateY(-2px);
 }
 
 .save-btn {

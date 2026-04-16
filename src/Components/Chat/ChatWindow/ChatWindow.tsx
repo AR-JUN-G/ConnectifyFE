@@ -90,11 +90,18 @@ const ChatWindow = ({ socket, toUserID, selectedUser, onlineUsers }: { socket: S
             scrollToBottom();
         });
 
+        
+        socket.on("messageUnsent", (unsentMessageId: string) => {
+            console.log("Message unsent:", unsentMessageId);
+            setMessages(prev => prev.filter(msg => msg._id !== unsentMessageId));
+        });
+
         // 4. THE MOST CRITICAL PART: The Cleanup Function
         // If you don't turn off the listener when the component unmounts, 
         // React will attach multiple listeners and messages will appear 2, 3, or 4 times!
         return () => {
             socket.off("messageReceived");
+            socket.off("messageUnsent");
         };
 
     }, [socket]);
@@ -125,6 +132,19 @@ const ChatWindow = ({ socket, toUserID, selectedUser, onlineUsers }: { socket: S
         setTimeout(scrollToBottom, 0);
     };
 
+    const handleUnsend = (messageId: string) => {
+        if (!toUserID || !user.userID) return;
+        
+        socket.emit("unsendMessage", {
+            messageId,
+            fromUserID: user.userID,
+            toUserID
+        });
+        
+        // Optimistically remove
+        setMessages(prev => prev.filter(msg => msg._id !== messageId));
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -145,16 +165,18 @@ const ChatWindow = ({ socket, toUserID, selectedUser, onlineUsers }: { socket: S
             <ChatHeader
                 name={selectedUser ? `${selectedUser.firstName} ${selectedUser.lastName}` : "Chat User"}
                 avatar={selectedUser?.photourl}
-                online={onlineUsers.includes(toUserID)} // Implementing real online feature later
+                online={onlineUsers.includes(toUserID)}
             />
             <div className="messages-area" onScroll={handleScroll} ref={scrollRef}>
                 {messages.length > 0 ? (
                     messages.map((msg) => (
                         <MessageBubble
                             key={msg._id}
+                            id={msg._id}
                             text={msg.message}
                             time={formatChatTime(msg.createdAt)}
                             isSent={msg.senderId === user.userID}
+                            onUnsend={handleUnsend}
                         />
                     ))
                 ) : (

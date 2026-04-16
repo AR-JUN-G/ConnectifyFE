@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { updateUserDetails } from "../../Store/userSlice";
 import { LoginAPI } from "../../API/AuthAPI";
 import useAuth from "../../customHooks/useAuth";
+import Spinner from "../Animation/Spinner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -30,33 +31,40 @@ const Login = () => {
 
     try {
       const response = await LoginAPI({ emailId: email, password });
-      if (response.data) {
-        dispatch(updateUserDetails({
-          userID: response.data.userID,
-          firstName: response.data.firstName,
-          lastName: response.data.lastName,
-          email: response.data.email,
-          photourl: response.data.photourl
-        }));
+  
+      if (response.data && response.status === 200) {
+        dispatch(
+          updateUserDetails({
+            userID: response.data.userID,
+            firstName: response.data.firstName,
+            lastName: response.data.lastName,
+            email: response.data.email,
+            photourl: response.data.photourl,
+          }),
+        );
         navigate("/home");
+      } else {
+        setError(response.error || "Invalid credentials! Please try again.");
       }
-    }
-    catch (err: any) {
+    } catch (err: any) {
       setError(err?.message || "Invalid credentials! Please try again.");
     }
   };
 
   if (loading) {
     return (
-      <div className="loading-container" style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: '#111',
-        color: '#fff'
-      }}>
-        <div className="loader">Loading...</div>
+      <div
+        className="loading-container"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          backgroundColor: "#111",
+          color: "#fff",
+        }}
+      >
+        <Spinner />
       </div>
     );
   }

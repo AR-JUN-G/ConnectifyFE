@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router";
 import useAuth from "../../customHooks/useAuth";
+import Spinner from "../Animation/Spinner";
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -19,7 +20,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
                 backgroundColor: '#111',
                 color: '#fff'
             }}>
-                <div className="loader">Loading...</div>
+                <Spinner/>
             </div>
         );
     }

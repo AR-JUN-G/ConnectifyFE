@@ -1,10 +1,12 @@
-import { useEffect, useState,useRef } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiSave, FiX, FiCheckCircle } from "react-icons/fi";
+import { FiSave, FiX, FiCheckCircle, FiLogOut } from "react-icons/fi";
 import { ProfileDataType } from "../../Types/ProfileAPI.types";
 import { getProfileAPI, editProfileAPI, getPresignedUrlAPI, uploadFileToS3API } from "../../API/ProfileAPI";
-import { updateUserDetails } from "../../Store/userSlice";
+import { updateUserDetails, removeUserDetails } from "../../Store/userSlice";
+import { LogoutAPI } from "../../API/AuthAPI";
 import "./Profile.css";
 
 const Profile = () => {
@@ -15,6 +17,17 @@ const Profile = () => {
     const [skillInput, setSkillInput] = useState("");
     const [isUploadingImage, setIsUploadingImage] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await LogoutAPI();
+            dispatch(removeUserDetails());
+            navigate("/login");
+        } catch (error) {
+            console.error("Logout error", error);
+        }
+    };
 
     const [formData, setFormData] = useState<Partial<ProfileDataType>>({
         firstName: "",
@@ -307,6 +320,9 @@ const Profile = () => {
                 </div>
 
                 <div className="profile-actions">
+                    <button type="button" className="logout-profile-btn" onClick={handleLogout}>
+                        <FiLogOut size={20} /> Logout
+                    </button>
                     <button type="submit" className="save-btn" disabled={isSaving}>
                         {isSaving ? (
                             <>Saving...</>

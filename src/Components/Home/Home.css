@@ -1,5 +1,6 @@
 .home-page {
-    min-height: 100vh;
+    min-height: 100%;
+    box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;

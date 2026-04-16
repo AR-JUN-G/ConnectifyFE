@@ -151,3 +151,93 @@
   background: #0a0a0a;
   overflow-y: auto;
 }
+
+/* Mobile Bottom Navigation Override */
+@media (max-width: 768px) {
+  .app-sidebar {
+    width: 100%;
+    height: 65px;
+    flex-direction: row;
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    padding: 0 16px;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(17, 17, 17, 0.95);
+    z-index: 1000;
+  }
+
+  .app-sidebar:hover {
+    width: 100%; /* Cancel hover effect on mobile */
+  }
+
+  .sidebar-logo {
+    display: none;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    margin: 0;
+  }
+
+  .nav-item {
+    flex-direction: column;
+    padding: 8px 12px;
+    gap: 4px;
+    width: auto;
+    border-radius: 12px;
+  }
+
+  .nav-item svg {
+    margin: 0 auto;
+  }
+
+  .nav-label {
+    opacity: 1;
+    font-size: 0.65rem;
+    font-weight: 500;
+  }
+
+  .nav-item.active {
+    box-shadow: none;
+    background: transparent;
+    color: var(--accent-color);
+  }
+
+  /* Footer acts as part of the bottom row now */
+  .sidebar-footer {
+    flex-direction: row;
+    margin-top: 0;
+    padding: 0;
+    width: auto;
+    gap: 12px;
+    align-items: center;
+    height: 100%;
+  }
+
+  .logout-btn .nav-label {
+    display: none;
+  }
+
+  .logout-btn {
+    padding: 8px;
+    width: auto;
+  }
+
+  .user-mini-avatar {
+    width: 32px;
+    height: 32px;
+    margin-left: 0;
+  }
+
+  .layout-content-wrapper {
+    margin-left: 0;
+    width: 100%;
+    padding-bottom: 65px; /* Leave space for bottom nav */
+  }
+}
